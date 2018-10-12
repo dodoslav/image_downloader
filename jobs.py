@@ -8,6 +8,7 @@ from threading import Lock
 
 lock = Lock()
 
+
 class RestrictedUrl(object):
     """ Create complete url and check url whether it was visited """
 
@@ -72,10 +73,10 @@ class VisitJob(Job):
         soup = BeautifulSoup(data)
         for a in soup.find_all('a'):
             r_url = RestrictedUrl(dest_url=a.get("href"), src_url=self.url)
-            if r_url.valid: JOBQUEUE.put(VisitJob(url=r_url.url)) 
+            JOBQUEUE.put(VisitJob(url=r_url.url)) if r_url.valid else None
         for img in soup.find_all('img'):
             r_url = RestrictedUrl(dest_url=img.get("src"), src_url=self.url)
-            if r_url.valid: JOBQUEUE.put(DownloadJob(url=r_url.url))
+            JOBQUEUE.put(DownloadJob(url=r_url.url)) if r_url.valid else None
 
 
 class DownloadJob(Job):

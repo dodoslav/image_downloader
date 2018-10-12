@@ -1,5 +1,4 @@
-import sys, traceback
-import os
+# import sys, traceback
 import threading
 import time
 from jobs import DownloadJob, VisitJob
@@ -18,34 +17,36 @@ class DownloadThread(threading.Thread):
             job = self.queue.get()
             print(f"[{self.name}] {job}")
             try:
-            	job.do_my_job()
+                job.do_my_job()
             except Exception as e:
                 print(f"[{self.name}] ERROR: {job}: {e}")
-                # traceback.print_exc(file=sys.stdout)
+                # traceback.print_exc(file=sys.stdout)
             self.queue.task_done()
 
 
 class MonitorThread(threading.Thread):
-	def __init__(self):
-		super(MonitorThread, self).__init__()
-		self.daemon = True
 
-	def run(self):
-		while True:
-			time.sleep(5)
-			print(f"JOBQUEUE size: {JOBQUEUE.qsize()}")
+    def __init__(self):
+        super(MonitorThread, self).__init__()
+        self.daemon = True
+
+    def run(self):
+        while True:
+            time.sleep(5)
+            print(f"JOBQUEUE size: {JOBQUEUE.qsize()}")
 
 
 def download(url, destfolder="./", numthreads=6):
-	DownloadJob.destfolder = destfolder
-	JOBQUEUE.put(VisitJob(url=url))
-	for i in range(numthreads):
-		t = DownloadThread(JOBQUEUE, f"thread-{i}")
-		t.start()
+    DownloadJob.destfolder = destfolder
+    JOBQUEUE.put(VisitJob(url=url))
+    for i in range(numthreads):
+        t = DownloadThread(JOBQUEUE, f"thread-{i}")
+        t.start()
 
-	t = MonitorThread()
-	t.start()
+    t = MonitorThread()
+    t.start()
 
-	JOBQUEUE.join()
+    JOBQUEUE.join()
+
 
 download("https://exponea.com", destfolder="./images")
