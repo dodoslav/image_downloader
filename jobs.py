@@ -39,9 +39,8 @@ class RestrictedUrl(object):
         with lock:
             if self.url in RestrictedUrl.visited_urls:
                 self.valid = False
-                return
-
-            RestrictedUrl.visited_urls[self.url] = 1
+            else:
+                RestrictedUrl.visited_urls[self.url] = 1
 
 
 class Job(object):
@@ -55,6 +54,9 @@ class Job(object):
 
     def __eq__(self, other):
         return self.priority == other.priority
+
+    def __repr__(self):
+        return f"Job: {self.__class__} - url: {self.url}"
 
 
 class VisitJob(Job):
