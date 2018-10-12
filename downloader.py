@@ -3,7 +3,6 @@ import os
 import threading
 import time
 from jobs import DownloadJob, VisitJob
-
 from jobqueue import JOBQUEUE
 
 
@@ -15,15 +14,16 @@ class DownloadThread(threading.Thread):
         self.daemon = True
 
     def run(self):
-        while self.queue.qsize() > 0:
+        while True:
             job = self.queue.get()
-            print(f"[{self.name}] Job: {job.__class__} - url: {job.url}")
+            print(f"[{self.name}] {job}")
             try:
             	job.do_my_job()
             except Exception as e:
-                print(f"[{self.name}] ERROR: Job: {job.__class__} - url: {job.url}: {e}")
+                print(f"[{self.name}] ERROR: {job}: {e}")
                 # traceback.print_exc(file=sys.stdout)
             self.queue.task_done()
+
 
 class MonitorThread(threading.Thread):
 	def __init__(self):

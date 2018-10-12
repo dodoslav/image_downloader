@@ -56,6 +56,9 @@ class Job(object):
     def __eq__(self, other):
         return self.priority == other.priority
 
+    def __repr__(self):
+        return f"Job: {self.__class__} - url: {self.url}"
+
 
 class VisitJob(Job):
 
